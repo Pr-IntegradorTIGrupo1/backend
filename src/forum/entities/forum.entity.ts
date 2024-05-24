@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Coment } from './coment.entity';
 
 @Entity()
 @ObjectType()
@@ -14,5 +15,8 @@ export class Forum {
   @Field(()=>Document)
   document: Document;
   
+  @OneToMany(() => Coment, coment => coment.forum)
+  @Field(()=>[Coment])
+  coments: Coment[];
 
 }

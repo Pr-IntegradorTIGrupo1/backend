@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Forum } from "./forum.entity";
 
 @Entity()
@@ -17,6 +17,6 @@ export class Coment{
     @Field((type) => Int)
     id_user: number;
 
-    @OneToOne(()=>Forum, forum => forum.coments)
+    @ManyToOne(()=>Forum, forum => forum.coments)
     forum: Forum;
 }
