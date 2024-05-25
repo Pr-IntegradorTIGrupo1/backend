@@ -10,13 +10,14 @@ import {
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Forum } from 'src/forum/entities/forum.entity';
 
+@Entity()
 @ObjectType()
 export class Document {
   @PrimaryGeneratedColumn()
   @Field((type) => Int)
   id: number;
 
-  @OneToOne(()=> Forum, forum => forum.document)
-  @Field((type)=>Forum)
+  @OneToOne(() => Forum, (forum) => forum.document)
+  @Field((type) => Forum)
   forum: Forum;
 }
