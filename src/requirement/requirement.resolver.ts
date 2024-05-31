@@ -4,6 +4,8 @@ import { Requirement } from './entities/requirement.entity';
 import { CreateRequirementInput } from './dto/create-requirement.input';
 import { UpdateRequirementInput } from './dto/update-requirement.input';
 
+
+
 @Resolver(() => Requirement)
 export class RequirementResolver {
   constructor(private readonly requirementService: RequirementService) {}

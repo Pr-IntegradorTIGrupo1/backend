@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Document } from '../../document/entities/document.entity';
+import { Campo } from './campo.entity';
 
 @Entity()
 @ObjectType()
@@ -20,4 +21,8 @@ export class Requirement {
   @ManyToMany(() => Document, (document) => document.requirements)
   @Field(() => [Document])
   documents: Document[];
+    
+  @OneToMany(() => Campo, campo => campo.requirement)
+  @Field(() => [Campo])
+  campos: Campo[];
 }

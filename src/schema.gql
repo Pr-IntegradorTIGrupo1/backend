@@ -35,11 +35,23 @@ type Version {
   document_old: Document!
 }
 
+type Campo {
+  id: Int!
+
+  """titulo del campo"""
+  titulo: String!
+
+  """cuerpo del campo"""
+  cuerpo: String!
+  requirement: Requirement!
+}
+
 type Requirement {
   id: Int!
   content: String!
   status: Boolean!
   documents: [Document!]!
+  campos: [Campo!]!
 }
 
 type Document {
