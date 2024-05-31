@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Document } from 'src/document/entities/document.entity';
 
@@ -6,7 +14,7 @@ import { Document } from 'src/document/entities/document.entity';
 @ObjectType()
 export class Template {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()
@@ -21,7 +29,7 @@ export class Template {
   @Field()
   format: string;
 
-  @OneToOne(() => Document, (document) => document.template)
-  @Field(() => Document)
-  document: Document;
+  @OneToMany(() => Document, (document) => document.template)
+  @Field(() => [Document])
+  documents: Document[];
 }

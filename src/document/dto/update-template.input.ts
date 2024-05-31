@@ -2,20 +2,17 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 @InputType()
-export class CreateForumInput {
+export class UpdateTemplateInput {
   @IsNotEmpty()
   @Field(() => Int)
   id: number;
 
-  @IsNotEmpty()
-  @Field()
+  @Field({ nullable: true })
   title: string;
 
-  @IsNotEmpty()
-  @Field()
-  content: string;
+  @Field({ nullable: true })
+  description: string;
 
-  @IsNotEmpty()
-  @Field()
-  id_document: number;
+  @Field({ nullable: true })
+  format: string;
 }

@@ -6,14 +6,14 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Comment } from './comment.entity';
 import { Document } from 'src/document/entities/document.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 @ObjectType()
 export class Forum {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()

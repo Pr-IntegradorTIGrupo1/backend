@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  Unique,
+} from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Document } from 'src/document/entities/document.entity';
 
@@ -6,11 +12,11 @@ import { Document } from 'src/document/entities/document.entity';
 @ObjectType()
 export class Version {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()
-  @Field((type) => Int)
+  @Field(() => Int)
   id_user: number;
 
   @Column()

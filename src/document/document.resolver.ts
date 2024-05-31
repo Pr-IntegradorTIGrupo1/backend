@@ -2,34 +2,46 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { DocumentService } from './document.service';
 import { Document } from './entities/document.entity';
 import { CreateDocumentInput } from './dto/create-document.input';
-import { UpdateDocumentInput } from './dto/update-document.input';
 
 @Resolver(() => Document)
 export class DocumentResolver {
   constructor(private readonly documentService: DocumentService) {}
 
+  @Query(() => Document)
+  getDocument(@Args('id', { type: () => Int }) id: number) {
+    try {
+      return this.documentService.getDocument(id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Document])
+  async getDocumentsByUser(
+    @Args('id_user', { type: () => Int }) id_user: number,
+  ) {
+    try {
+      return await this.documentService.getDocumentsByUser(id_user);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Document])
+  async getAllDocument() {
+    try {
+      return await this.documentService.getAllDocument();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
   @Mutation(() => Document)
-  createDocument(@Args('createDocumentInput') createDocumentInput: CreateDocumentInput) {
-    return this.documentService.create(createDocumentInput);
-  }
-
-  @Query(() => [Document], { name: 'document' })
-  findAll() {
-    return this.documentService.findAll();
-  }
-
-  @Query(() => Document, { name: 'document' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.documentService.findOne(id);
-  }
-
-  @Mutation(() => Document)
-  updateDocument(@Args('updateDocumentInput') updateDocumentInput: UpdateDocumentInput) {
-    return this.documentService.update(updateDocumentInput.id, updateDocumentInput);
-  }
-
-  @Mutation(() => Document)
-  removeDocument(@Args('id', { type: () => Int }) id: number) {
-    return this.documentService.remove(id);
+  createDocument(@Args('input') createDocumentInput: CreateDocumentInput) {
+    try {
+      return this.documentService.createDocument(createDocumentInput);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
