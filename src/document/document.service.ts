@@ -7,6 +7,7 @@ import { Requirement } from 'src/requirement/entities/requirement.entity';
 import { Version } from './entities/version.entity';
 import { Template } from './entities/template.entity';
 import { UpdateDocumentInput } from './dto/update-document.input';
+import { CreateTemplateInput } from './dto/create-template.input';
 
 @Injectable()
 export class DocumentService {
@@ -60,5 +61,19 @@ export class DocumentService {
     }
 
     return await this.documentRepository.save(document);
+  }
+
+  //------------------------------------Template Methods------------------------------------
+  async getTemplate(id: number): Promise<Template> {
+    return await this.templateRepository.findOne({ where: { id } });
+  }
+
+  async getAllTemplate(): Promise<Template[]> {
+    return await this.templateRepository.find();
+  }
+
+  async createTemplate(input: CreateTemplateInput): Promise<Template> {
+    const template = this.templateRepository.create(input);
+    return await this.templateRepository.save(template);
   }
 }
