@@ -3,6 +3,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,11 +18,11 @@ import { Requirement } from 'src/requirement/entities/requirement.entity';
 @ObjectType()
 export class Document {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()
-  @Field((type) => Int)
+  @Field(() => Int)
   id_user: number;
 
   @Column()
@@ -36,7 +37,7 @@ export class Document {
   @Field(() => [Forum])
   forums: Forum[];
 
-  @OneToOne(() => Template, (template) => template.document)
+  @ManyToOne(() => Template, (template) => template.documents)
   @Field(() => Template)
   template: Template;
 

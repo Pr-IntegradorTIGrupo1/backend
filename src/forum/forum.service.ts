@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateForumInput } from './dto/create-forum.input';
-import { UpdateForumInput } from './dto/update-forum.input';
+import { Forum } from './entities/forum.entity';
+import { Comment } from './entities/comment.entity';
+import { Document } from 'src/document/entities/document.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateCommentInput } from './dto/create-comment.input';
 
 @Injectable()
 export class ForumService {
-  create(createForumInput: CreateForumInput) {
-    return 'This action adds a new forum';
+  constructor(
+    @InjectRepository(Forum)
+    private forumRepository: Repository<Forum>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+    @InjectRepository(Document)
+    private documentRepository: Repository<Document>,
+  ) {}
+
+  //------------------------------------Forum Methods------------------------------------
+  async getForum(id: number): Promise<Forum> {
+    return await this.forumRepository.findOne({ where: { id } });
   }
 
-  findAll() {
-    return `This action returns all forum`;
+  async getAllForum(): Promise<Forum[]> {
+    return await this.forumRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} forum`;
+  async createForum(input: CreateForumInput): Promise<Forum> {
+    const document = await this.documentRepository.findOne({
+      where: { id: input.id_document },
+    });
+    if (!document) {
+      throw new Error('Documento no encontrado');
+    }
+    const forum = this.forumRepository.create({ ...input, document });
+    return await this.forumRepository.save(forum);
   }
 
-  update(id: number, updateForumInput: UpdateForumInput) {
-    return `This action updates a #${id} forum`;
+  //------------------------------------Comment Methods------------------------------------
+  async getComment(id: number): Promise<Comment> {
+    return await this.commentRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} forum`;
+  async getAllComment(): Promise<Comment[]> {
+    return await this.commentRepository.find();
+  }
+
+  async createComment(input: CreateCommentInput): Promise<Comment> {
+    const forum = await this.forumRepository.findOne({
+      where: { id: input.id_forum },
+    });
+    const comment = this.commentRepository.create({ ...input, forum });
+    return await this.commentRepository.save(comment);
   }
 }

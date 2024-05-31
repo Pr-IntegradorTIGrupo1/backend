@@ -23,7 +23,7 @@ type Template {
   title: String!
   description: String!
   format: String!
-  document: Document!
+  documents: [Document!]!
 }
 
 type Version {
@@ -66,32 +66,27 @@ type Document {
 }
 
 type Query {
-  document(id: Int!): Document!
+  getDocument(id: Int!): Document!
+  getDocumentsByUser(id_user: Int!): [Document!]!
+  getAllDocument: [Document!]!
   requirement(id: Int!): Requirement!
-  forum(id: Int!): Forum!
+  getForum(id: Int!): Forum!
+  getAllForum: [Forum!]!
 }
 
 type Mutation {
-  createDocument(createDocumentInput: CreateDocumentInput!): Document!
-  updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
-  removeDocument(id: Int!): Document!
+  createDocument(input: CreateDocumentInput!): Document!
   createRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
   updateRequirement(updateRequirementInput: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
-  createForum(createForumInput: CreateForumInput!): Forum!
-  updateForum(updateForumInput: UpdateForumInput!): Forum!
-  removeForum(id: Int!): Forum!
+  createForum(input: CreateForumInput!): Forum!
 }
 
 input CreateDocumentInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateDocumentInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  title: String!
+  content: String!
+  id_user: Int!
+  id_template: Int!
 }
 
 input CreateRequirementInput {
@@ -106,12 +101,8 @@ input UpdateRequirementInput {
 }
 
 input CreateForumInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateForumInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
+  title: String!
+  content: String!
+  id_document: Float!
 }

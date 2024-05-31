@@ -6,10 +6,11 @@ import { Document } from './entities/document.entity';
 import { Template } from './entities/template.entity';
 import { Version } from './entities/version.entity';
 import { Requirement } from 'src/requirement/entities/requirement.entity';
-import { Forum } from 'src/forum/entities/forum.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Document, Template, Version])],
+  imports: [
+    TypeOrmModule.forFeature([Document, Template, Version, Requirement]),
+  ],
   providers: [DocumentResolver, DocumentService],
 })
 export class DocumentModule {}
