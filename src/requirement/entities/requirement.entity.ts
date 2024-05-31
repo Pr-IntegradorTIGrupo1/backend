@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Document } from '../../document/entities/document.entity';
 
+@Entity()
 @ObjectType()
 export class Requirement {
   @PrimaryGeneratedColumn()

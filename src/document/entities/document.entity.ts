@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -45,5 +46,6 @@ export class Document {
 
   @ManyToMany(() => Requirement, (requirement) => requirement.documents)
   @Field(() => [Requirement])
+  @JoinTable()
   requirements: Requirement[];
 }
