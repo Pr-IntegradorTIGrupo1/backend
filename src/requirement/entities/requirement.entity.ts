@@ -1,7 +1,15 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Column, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Document } from '../../document/entities/document.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Document } from 'src/document/entities/document.entity';
 
+@Entity()
 @ObjectType()
 export class Requirement {
   @PrimaryGeneratedColumn()
@@ -17,6 +25,7 @@ export class Requirement {
   status: boolean;
 
   @ManyToMany(() => Document, (document) => document.requirements)
+  @JoinTable({ name: 'requirement_document' })
   @Field(() => [Document])
   documents: Document[];
 }

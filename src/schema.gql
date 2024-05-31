@@ -1,0 +1,105 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Comment {
+  id: Int!
+  content: String!
+  id_user: Int!
+  forum: Forum!
+}
+
+type Forum {
+  id: Int!
+  title: String!
+  content: String!
+  status: String!
+  coments: [Comment!]!
+  document: Document!
+}
+
+type Template {
+  id: Int!
+  title: String!
+  description: String!
+  format: String!
+  document: Document!
+}
+
+type Version {
+  id: Int!
+  id_user: Int!
+  timestamp: String!
+  version: String!
+  document: Document!
+  document_old: Document!
+}
+
+type Requirement {
+  id: Int!
+  content: String!
+  status: Boolean!
+  documents: [Document!]!
+}
+
+type Document {
+  id: Int!
+  id_user: Int!
+  title: String!
+  timestamp: String!
+  forums: [Forum!]!
+  template: Template!
+  version: Version!
+  requirements: [Requirement!]!
+}
+
+type Query {
+  document(id: Int!): Document!
+  requirement(id: Int!): Requirement!
+  forum(id: Int!): Forum!
+}
+
+type Mutation {
+  createDocument(createDocumentInput: CreateDocumentInput!): Document!
+  updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
+  removeDocument(id: Int!): Document!
+  createRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
+  updateRequirement(updateRequirementInput: UpdateRequirementInput!): Requirement!
+  removeRequirement(id: Int!): Requirement!
+  createForum(createForumInput: CreateForumInput!): Forum!
+  updateForum(updateForumInput: UpdateForumInput!): Forum!
+  removeForum(id: Int!): Forum!
+}
+
+input CreateDocumentInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateDocumentInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRequirementInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRequirementInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateForumInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateForumInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}

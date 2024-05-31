@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Req } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentService } from './document.service';
 import { DocumentResolver } from './document.resolver';
