@@ -12,7 +12,7 @@ export class Campo{
 
     @Column()
     @Field({description:'titulo del campo'})
-    titulo:string;
+    title:string;
 
     @Column()
     @Field({description:'cuerpo del campo'})

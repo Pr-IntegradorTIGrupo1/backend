@@ -39,7 +39,7 @@ type Campo {
   id: Int!
 
   """titulo del campo"""
-  titulo: String!
+  title: String!
 
   """cuerpo del campo"""
   cuerpo: String!
@@ -48,7 +48,7 @@ type Campo {
 
 type Requirement {
   id: Int!
-  content: String!
+  title: String!
   status: Boolean!
   documents: [Document!]!
   campos: [Campo!]!
@@ -69,15 +69,20 @@ type Query {
   getDocument(id: Int!): Document!
   getDocumentsByUser(id_user: Int!): [Document!]!
   getAllDocument: [Document!]!
-  requirement(id: Int!): Requirement!
+  requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
   getAllForum: [Forum!]!
+}
+
+input FindRequirementsById {
+  id: Int!
 }
 
 type Mutation {
   createDocument(input: CreateDocumentInput!): Document!
   createRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
-  updateRequirement(updateRequirementInput: UpdateRequirementInput!): Requirement!
+  updateRequirement(input: UpdateRequirementInput!): Requirement!
+  createCampoRequirement(input: AddCampoDto!): Requirement!
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
 }
@@ -90,14 +95,22 @@ input CreateDocumentInput {
 }
 
 input CreateRequirementInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Título del requisito"""
+  title: String!
+  id_document: Int!
 }
 
 input UpdateRequirementInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  title: String
+  id_document: Int
   id: Int!
+  status: Boolean
+}
+
+input AddCampoDto {
+  id_requisito: Int!
+  title: String!
+  cuerpo: String!
 }
 
 input CreateForumInput {

@@ -7,6 +7,7 @@ import * as dotenv from 'dotenv';
 import { DocumentModule } from './document/document.module';
 import { RequirementModule } from './requirement/requirement.module';
 import { ForumModule } from './forum/forum.module';
+import { CampoService } from './requirement/campo.service';
 
 dotenv.config();
 

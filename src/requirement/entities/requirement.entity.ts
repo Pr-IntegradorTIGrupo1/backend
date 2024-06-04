@@ -12,7 +12,7 @@ export class Requirement {
 
   @Column()
   @Field()
-  content: string;
+  title: string;
 
   @Column()
   @Field((type) => Boolean)
@@ -22,7 +22,8 @@ export class Requirement {
   @Field(() => [Document])
   documents: Document[];
     
-  @OneToMany(() => Campo, campo => campo.requirement)
+  //cascade true por si se elimina el requisito se eliminen sus campos
+  @OneToMany(() => Campo, campo => campo.requirement,{cascade:true})
   @Field(() => [Campo])
   campos: Campo[];
 }
