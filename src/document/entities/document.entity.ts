@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -39,6 +40,7 @@ export class Document {
 
   @ManyToOne(() => Template, (template) => template.documents)
   @Field(() => Template)
+  @JoinColumn()
   template: Template;
 
   @OneToOne(() => Version, (version) => version.document)
