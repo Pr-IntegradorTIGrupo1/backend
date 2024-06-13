@@ -47,7 +47,10 @@ export class RequirementService {
 
   async getAllRequirementById({id}:FindRequirementsById): Promise<Requirement[]> {
     const document = await this.documentRepository.findOne({where: {id},
-    relations:['requirements' ]});
+    relations:['requirements','requirements.campos' ]});
+    if (!document) {
+      throw new Error(`Document with id ${id} not found`);
+    }
     return document.requirements;
   }
 
