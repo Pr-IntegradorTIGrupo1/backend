@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, RequestMethod } from '@nestjs/common';
 import { CreateRequirementInput } from './dto/create-requirement.input';
 import { UpdateRequirementInput } from './dto/update-requirement.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,7 +7,6 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import { Document } from 'src/document/entities/document.entity';
 import { FindRequirementsById } from './dto/find-requirementById.dto';
 import { AddCampoDto } from './dto/add-campo.dto';
-import { CampoService } from './campo.service';
 
 @Injectable()
 export class RequirementService {
@@ -17,32 +16,30 @@ export class RequirementService {
     private readonly requirementRepository: Repository<Requirement>,
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
-    private readonly campoService:CampoService,
   ){}
 
 
 
   //async asociateDocument()
  
-  async createRequirement({title,id_document}: CreateRequirementInput) {
-    const documento = await this.documentRepository.findOne({where: {id:id_document},
-    relations:['requirements' ]});
-    if(!documento){
-      throw new NotFoundException(`Document with ID ${id_document} not found`);
-    }
+  async createRequirement(title:string,type:string,document:Document,campos:string[]):Promise<Requirement> {
  //se inicia el false ya que recien se crea el requirimiento
     const status = false;
     const requirement = new Requirement();
     requirement.title = title;
     requirement.status = status;
+    requirement.type = type;
+    requirement.document = document;
+    requirement.campos = campos;
     //logica de asociar al documento, para agregar mas documento al requisitos no es aca
     //hacemos la relacion bidireccional
-    requirement.documents = [documento];
-    documento.requirements.push(requirement);
-    //guardar cambios.
-    await this.documentRepository.save(documento); 
-    return await this.requirementRepository.save(requirement);
+    requirement.document = document;
+    document.requirements.push(requirement);
+    return requirement;
     
+  }
+  addRequirement(createRequirementInput: CreateRequirementInput): Requirement | PromiseLike<Requirement> {
+    throw new Error('Method not implemented.');
   }
 
   async getAllRequirementById({id}:FindRequirementsById): Promise<Requirement[]> {
@@ -68,21 +65,6 @@ export class RequirementService {
     if(title !== undefined){
       requirement.title = title;
     }
-    return await this.requirementRepository.save(requirement);
-  }
-
-  async createCampo(input:AddCampoDto):Promise<Requirement>{
-    const {title,cuerpo,id_requisito}=input;
-    const requirement = await this.requirementRepository.findOne({where:{id:id_requisito},
-    relations:['campos']})
-    if(!requirement){
-      throw new NotFoundException(`Requirement with ID ${id_requisito} not found`);
-    }
-    //creamos el campo con todas sus relaciones (se guarda en la base de datos)
-    const campo = await this.campoService.createCampo(title,cuerpo,requirement);
-    //relacionar requirement con campo
-    requirement.campos.push(campo);
-    //guardamos los cambios
     return await this.requirementRepository.save(requirement);
   }
 

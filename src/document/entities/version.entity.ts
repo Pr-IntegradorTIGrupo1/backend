@@ -25,7 +25,7 @@ export class Version {
 
   @Column()
   @Field()
-  version: string;
+  version: number;
 
   @OneToOne(() => Document, (document) => document.version)
   @Field(() => Document)

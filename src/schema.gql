@@ -30,28 +30,18 @@ type Version {
   id: Int!
   id_user: Int!
   timestamp: String!
-  version: String!
+  version: Float!
   document: Document!
   document_old: Document!
-}
-
-type Campo {
-  id: Int!
-
-  """titulo del campo"""
-  title: String!
-
-  """cuerpo del campo"""
-  cuerpo: String!
-  requirement: Requirement!
 }
 
 type Requirement {
   id: Int!
   title: String!
+  type: String!
   status: Boolean!
-  documents: [Document!]!
-  campos: [Campo!]!
+  document: Document!
+  campos: [String!]!
 }
 
 type Document {
@@ -80,9 +70,8 @@ input FindRequirementsById {
 
 type Mutation {
   createDocument(input: CreateDocumentInput!): Document!
-  createRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
+  addRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
-  createCampoRequirement(input: AddCampoDto!): Requirement!
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
 }
@@ -105,12 +94,6 @@ input UpdateRequirementInput {
   id_document: Int
   id: Int!
   status: Boolean
-}
-
-input AddCampoDto {
-  id_requisito: Int!
-  title: String!
-  cuerpo: String!
 }
 
 input CreateForumInput {

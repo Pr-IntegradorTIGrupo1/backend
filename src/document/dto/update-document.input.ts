@@ -7,6 +7,10 @@ export class UpdateDocumentInput {
   @Field(() => Int)
   id: number;
 
+  @Field(()=>Int)
+  id_user:number;
+
+
   @Field({ nullable: true })
   title: string;
 

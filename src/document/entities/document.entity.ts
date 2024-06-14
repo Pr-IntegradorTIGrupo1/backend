@@ -47,8 +47,7 @@ export class Document {
   @Field(() => Version)
   version: Version;
 
-  @ManyToMany(() => Requirement, (requirement) => requirement.documents)
+  @OneToMany(() => Requirement, (requirement) => requirement.document)
   @Field(() => [Requirement])
-  @JoinTable()
   requirements: Requirement[];
 }
