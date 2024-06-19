@@ -17,5 +17,9 @@ export class CreateDocumentInput {
 
   @IsNotEmpty()
   @Field(() => Int)
+  id_project: number;
+
+  @IsNotEmpty()
+  @Field(() => Int)
   id_template: number;
 }

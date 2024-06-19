@@ -23,10 +23,6 @@ export class Template {
 
   @Column()
   @Field()
-  description: string;
-
-  @Column()
-  @Field()
   format: string;
 
   @OneToMany(() => Document, (document) => document.template)

@@ -24,6 +24,10 @@ export class Document {
 
   @Column()
   @Field(() => Int)
+  id_project: number;
+
+  @Column()
+  @Field(() => Int)
   id_user: number;
 
   @Column()

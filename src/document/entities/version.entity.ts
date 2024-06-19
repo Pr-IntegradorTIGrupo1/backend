@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   Unique,
+  JoinColumn,
 } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Document } from 'src/document/entities/document.entity';
@@ -29,9 +30,11 @@ export class Version {
 
   @OneToOne(() => Document, (document) => document.version)
   @Field(() => Document)
+  @JoinColumn()
   document: Document;
 
   @OneToOne(() => Document, (document) => document.version)
-  @Field(() => Document)
+  @Field(() => Document, { nullable: true })
+  @JoinColumn()
   document_old: Document;
 }

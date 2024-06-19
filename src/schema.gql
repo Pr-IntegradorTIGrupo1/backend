@@ -21,7 +21,6 @@ type Forum {
 type Template {
   id: Int!
   title: String!
-  description: String!
   format: String!
   documents: [Document!]!
 }
@@ -32,20 +31,19 @@ type Version {
   timestamp: String!
   version: Float!
   document: Document!
-  document_old: Document!
+  document_old: Document
 }
 
 type Requirement {
   id: Int!
-  title: String!
-  type: String!
+  content: String!
   status: Boolean!
   document: Document!
-  campos: [String!]!
 }
 
 type Document {
   id: Int!
+  id_project: Int!
   id_user: Int!
   title: String!
   timestamp: String!
@@ -59,6 +57,8 @@ type Query {
   getDocument(id: Int!): Document!
   getDocumentsByUser(id_user: Int!): [Document!]!
   getAllDocument: [Document!]!
+  getTemplate(id: Int!): Template!
+  getAllTemplate: [Template!]!
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
   getAllForum: [Forum!]!
@@ -70,6 +70,7 @@ input FindRequirementsById {
 
 type Mutation {
   createDocument(input: CreateDocumentInput!): Document!
+  createTemplate(input: CreateTemplateInput!): Template!
   addRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
@@ -80,7 +81,13 @@ input CreateDocumentInput {
   title: String!
   content: String!
   id_user: Int!
+  id_project: Int!
   id_template: Int!
+}
+
+input CreateTemplateInput {
+  title: String!
+  format: String!
 }
 
 input CreateRequirementInput {

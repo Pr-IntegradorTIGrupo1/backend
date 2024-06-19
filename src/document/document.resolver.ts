@@ -46,7 +46,6 @@ export class DocumentResolver {
       throw new Error(error.message);
     }
   }
-
 }
 
 @Resolver(() => Template)
