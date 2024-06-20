@@ -29,3 +29,12 @@ export class Template {
   @Field(() => [Document])
   documents: Document[];
 }
+
+@ObjectType()
+export class TemplateResponse {
+  @Field()
+  success: boolean;
+
+  @Field()
+  message: string;
+}

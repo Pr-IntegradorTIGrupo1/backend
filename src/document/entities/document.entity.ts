@@ -55,3 +55,12 @@ export class Document {
   @Field(() => [Requirement])
   requirements: Requirement[];
 }
+
+@ObjectType()
+export class DocumentResponse {
+  @Field()
+  success: boolean;
+
+  @Field()
+  message: string;
+}

@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { DocumentService } from './document.service';
-import { Document } from './entities/document.entity';
-import { Template } from './entities/template.entity';
+import { Document, DocumentResponse } from './entities/document.entity';
+import { Template, TemplateResponse } from './entities/template.entity';
 import { CreateDocumentInput } from './dto/create-document.input';
 import { CreateTemplateInput } from './dto/create-template.input';
 
@@ -38,7 +38,7 @@ export class DocumentResolver {
     }
   }
 
-  @Mutation(() => Document)
+  @Mutation(() => DocumentResponse)
   createDocument(@Args('input') createDocumentInput: CreateDocumentInput) {
     try {
       return this.documentService.createDocument(createDocumentInput);
@@ -70,7 +70,7 @@ export class TemplateResolver {
     }
   }
 
-  @Mutation(() => Template)
+  @Mutation(() => TemplateResponse)
   createTemplate(@Args('input') createTemplateInput: CreateTemplateInput) {
     try {
       return this.documentService.createTemplate(createTemplateInput);

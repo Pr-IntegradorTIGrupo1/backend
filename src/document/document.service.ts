@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateDocumentInput } from './dto/create-document.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { Document } from './entities/document.entity';
+import { Document, DocumentResponse } from './entities/document.entity';
 import { Requirement } from 'src/requirement/entities/requirement.entity';
 import { Version } from './entities/version.entity';
-import { Template } from './entities/template.entity';
+import { Template, TemplateResponse } from './entities/template.entity';
 import { UpdateDocumentInput } from './dto/update-document.input';
 import { CreateTemplateInput } from './dto/create-template.input';
 import { RequirementService } from 'src/requirement/requirement.service';
@@ -104,7 +104,7 @@ export class DocumentService {
     await this.documentRepository.save(document);
   }
 
-  async createDocument(input: CreateDocumentInput): Promise<Document> {
+  async createDocument(input: CreateDocumentInput): Promise<DocumentResponse> {
     const { id_template, id_user, title, content } = input;
     //verificamos que existe el template
     const template = await this.templateRepository.findOne({
@@ -128,9 +128,11 @@ export class DocumentService {
 
     // template.documents.push(document);
 
-    //creamos la primera version
+    const success = true;
+    const message = 'Documento creado exitosamente';
+    const response = { success, message };
 
-    return await this.documentRepository.save(document);
+    return response;
   }
 
   // async copyDocument(document:Document):Promise<Document>{
@@ -176,8 +178,14 @@ export class DocumentService {
     return await this.templateRepository.find();
   }
 
-  async createTemplate(input: CreateTemplateInput): Promise<Template> {
+  async createTemplate(input: CreateTemplateInput): Promise<TemplateResponse> {
     const template = this.templateRepository.create(input);
-    return await this.templateRepository.save(template);
+    await this.templateRepository.save(template);
+
+    const success = true;
+    const message = 'Plantilla creada exitosamente';
+    const response = { success, message };
+
+    return response;
   }
 }

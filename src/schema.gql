@@ -25,6 +25,11 @@ type Template {
   documents: [Document!]!
 }
 
+type TemplateResponse {
+  success: Boolean!
+  message: String!
+}
+
 type Version {
   id: Int!
   id_user: Int!
@@ -53,6 +58,11 @@ type Document {
   requirements: [Requirement!]!
 }
 
+type DocumentResponse {
+  success: Boolean!
+  message: String!
+}
+
 type Query {
   getDocument(id: Int!): Document!
   getDocumentsByUser(id_user: Int!): [Document!]!
@@ -69,8 +79,8 @@ input FindRequirementsById {
 }
 
 type Mutation {
-  createDocument(input: CreateDocumentInput!): Document!
-  createTemplate(input: CreateTemplateInput!): Template!
+  createDocument(input: CreateDocumentInput!): DocumentResponse!
+  createTemplate(input: CreateTemplateInput!): TemplateResponse!
   addRequirement(input: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
