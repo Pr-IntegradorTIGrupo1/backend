@@ -5,7 +5,7 @@ import { IsNotEmpty, IsEmail } from 'class-validator';
 export class UpdateTemplateInput {
   @IsNotEmpty()
   @Field(() => Int)
-  id: number;
+  id_template: number;
 
   @Field({ nullable: true })
   title: string;

@@ -36,7 +36,6 @@ type Version {
   timestamp: String!
   version: Float!
   document: Document!
-  document_old: Document
 }
 
 type Requirement {
@@ -48,10 +47,13 @@ type Requirement {
 
 type Document {
   id: Int!
+  id_document: String!
   id_project: Int!
   id_user: Int!
   title: String!
   timestamp: String!
+  read_only: Boolean!
+  is_active: Boolean!
   forums: [Forum!]!
   template: Template!
   version: Version!
@@ -66,7 +68,9 @@ type DocumentResponse {
 type Query {
   getDocument(id: Int!): Document!
   getDocumentsByUser(id_user: Int!): [Document!]!
+  getDocumentsByProject(id_project: Int!): [Document!]!
   getAllDocument: [Document!]!
+  getAllDocumentsVersions(id_document: Int!): [Document!]!
   getTemplate(id: Int!): Template!
   getAllTemplate: [Template!]!
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
@@ -80,6 +84,7 @@ input FindRequirementsById {
 
 type Mutation {
   createDocument(input: CreateDocumentInput!): DocumentResponse!
+  updateDocument(input: UpdateDocumentInput!): DocumentResponse!
   createTemplate(input: CreateTemplateInput!): TemplateResponse!
   addRequirement(input: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
@@ -92,6 +97,14 @@ input CreateDocumentInput {
   content: String!
   id_user: Int!
   id_project: Int!
+  id_template: Int!
+}
+
+input UpdateDocumentInput {
+  id_document: Int!
+  id_user: Int!
+  title: String!
+  content: String!
   id_template: Int!
 }
 

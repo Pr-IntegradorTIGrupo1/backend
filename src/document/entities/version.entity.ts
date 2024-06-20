@@ -32,9 +32,4 @@ export class Version {
   @Field(() => Document)
   @JoinColumn()
   document: Document;
-
-  @OneToOne(() => Document, (document) => document.version)
-  @Field(() => Document, { nullable: true })
-  @JoinColumn()
-  document_old: Document;
 }
