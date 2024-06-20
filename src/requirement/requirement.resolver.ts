@@ -14,7 +14,7 @@ export class RequirementResolver {
   //crea un nuevo requirimiento
   @Mutation(() => Requirement)
   async addRequirement(
-    @Args('createRequirementInput')
+    @Args('input')
     createRequirementInput: CreateRequirementInput,
   ): Promise<Requirement> {
     try {

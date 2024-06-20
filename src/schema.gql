@@ -71,7 +71,7 @@ input FindRequirementsById {
 type Mutation {
   createDocument(input: CreateDocumentInput!): Document!
   createTemplate(input: CreateTemplateInput!): Template!
-  addRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
+  addRequirement(input: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
