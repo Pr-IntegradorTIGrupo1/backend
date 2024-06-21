@@ -70,12 +70,18 @@ export class DocumentService {
     });
   }
 
-  // Get documents by project id
+  // Get last version documents by project id
   async getDocumentsByProject(id_project: number): Promise<Document[]> {
-    return await this.documentRepository.find({
+    let documents = await this.documentRepository.find({
       where: { id_project },
       relations: ['requirements', 'version', 'template', 'forums'],
     });
+
+    documents = documents.filter(
+      (document) => document.version.last_version === true,
+    );
+
+    return documents;
   }
 
   // Get all documents
@@ -83,6 +89,19 @@ export class DocumentService {
     return await this.documentRepository.find({
       relations: ['requirements', 'version', 'template', 'forums'],
     });
+  }
+
+  // Get all last version documents
+  async getAllDocumentsLastVersion(): Promise<Document[]> {
+    let documents = await this.documentRepository.find({
+      relations: ['requirements', 'version', 'template', 'forums'],
+    });
+
+    documents = documents.filter(
+      (document) => document.version.last_version === true,
+    );
+
+    return documents;
   }
 
   // Get all versions of a document by document id
@@ -129,6 +148,7 @@ export class DocumentService {
       timestamp: new Date().toISOString().slice(0, 16),
       version: 1,
       document: document,
+      last_version: true,
     });
     await this.versionRepository.save(version);
     await this.documentRepository.save(document);
@@ -145,6 +165,7 @@ export class DocumentService {
       timestamp: new Date().toISOString().slice(0, 16),
       version: versionNumber + 1,
       document: document,
+      last_version: true,
     });
     await this.versionRepository.save(version);
     await this.documentRepository.save(document);
@@ -194,13 +215,6 @@ export class DocumentService {
       throw new Error('Documento no encontrado');
     }
 
-    // Check if document is read only
-    if (document_old.read_only) {
-      throw new Error('Documento no se puede actualizar');
-    }
-    document_old.read_only = true;
-    await this.documentRepository.save(document_old);
-
     // Find template
     const template = await this.templateRepository.findOne({
       where: { id: input.id_template },
@@ -208,6 +222,13 @@ export class DocumentService {
     if (!template) {
       throw new Error('Plantilla no encontrada');
     }
+
+    // Check if document is read only
+    if (document_old.read_only) {
+      throw new Error('Documento no se puede actualizar');
+    }
+    document_old.read_only = true;
+    await this.documentRepository.save(document_old);
 
     // Create new document
     const document_new = this.documentRepository.create({
@@ -230,46 +251,15 @@ export class DocumentService {
       document_new,
     );
 
+    document_old.version.last_version = false;
+    await this.versionRepository.save(document_old.version);
+
     const success = true;
     const message = 'Documento actualizado exitosamente';
     const response = { success, message };
 
     return response;
   }
-
-  // async copyDocument(document:Document):Promise<Document>{
-  //   const newDocument = new Document();
-  //   newDocument.forums = document.forums;
-  //   newDocument.id_user = document.id_user;
-  //   newDocument.requirements = document.requirements;
-  //   newDocument.template = document.template;
-  //   newDocument.title = document.title;
-  //   await this.documentRepository.save(newDocument);
-  //   return newDocument;
-  // }
-  // async updateDocument(input: UpdateDocumentInput): Promise<Document> {
-  //   const document = await this.documentRepository.findOne({
-  //     where: { id: input.id },
-  //   });
-  //   if (!document) {
-  //     throw new Error('Documento no encontrado');
-  //   }
-  //   const newDocument = this.copyDocument(document);
-  //   if (input.title) {
-  //     newDocument.title = input.title;
-  //   }
-  //   if (input.id_template) {
-  //     const template = await this.templateRepository.findOne({
-  //       where: { id: input.id_template },
-  //     });
-  //     if (!template) {
-  //       throw new Error('Plantilla no encontrada');
-  //     }
-  //     newDocument.template = template;
-  //   }
-  //   await this.createNewVersion(document, input.id_user)
-  //   return await this.documentRepository.save(document);
-  // }
 
   //------------------------------------Template Methods------------------------------------
   async getTemplate(id: number): Promise<Template> {

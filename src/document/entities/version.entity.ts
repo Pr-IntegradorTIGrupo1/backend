@@ -28,6 +28,10 @@ export class Version {
   @Field()
   version: number;
 
+  @Column()
+  @Field()
+  last_version: boolean;
+
   @OneToOne(() => Document, (document) => document.version)
   @Field(() => Document)
   @JoinColumn()

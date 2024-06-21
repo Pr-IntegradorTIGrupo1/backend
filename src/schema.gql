@@ -35,6 +35,7 @@ type Version {
   id_user: Int!
   timestamp: String!
   version: Float!
+  last_version: Boolean!
   document: Document!
 }
 
@@ -70,6 +71,7 @@ type Query {
   getDocumentsByUser(id_user: Int!): [Document!]!
   getDocumentsByProject(id_project: Int!): [Document!]!
   getAllDocument: [Document!]!
+  getAllDocumentsLastVersion: [Document!]!
   getAllDocumentsVersions(id_document: Int!): [Document!]!
   getTemplate(id: Int!): Template!
   getAllTemplate: [Template!]!

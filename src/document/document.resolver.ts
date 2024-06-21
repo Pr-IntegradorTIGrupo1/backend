@@ -51,6 +51,15 @@ export class DocumentResolver {
   }
 
   @Query(() => [Document])
+  async getAllDocumentsLastVersion() {
+    try {
+      return await this.documentService.getAllDocumentsLastVersion();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Document])
   async getAllDocumentsVersions(
     @Args('id_document', { type: () => Int }) id_document: number,
   ) {
