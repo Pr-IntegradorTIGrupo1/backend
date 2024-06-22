@@ -28,9 +28,13 @@ export class Forum {
   @Field()
   status: string;
 
+  @Column()
+  @Field(()=>Int)
+  id_user:number;
+
   @OneToMany(() => Comment, (comment) => comment.forum)
   @Field(() => [Comment])
-  coments: Comment[];
+  comments: Comment[];
 
   @ManyToOne(() => Document, (document) => document.forums)
   @Field(() => Document)

@@ -4,6 +4,8 @@ import { Forum } from './entities/forum.entity';
 import { Comment } from './entities/comment.entity';
 import { CreateForumInput } from './dto/create-forum.input';
 import { CreateCommentInput } from './dto/create-comment.input';
+import { UpdateCommentInput } from './dto/update-comment.input';
+import { UpdateForumInput } from './dto/update-forum.input';
 
 //------------------------------------Forum Methods------------------------------------
 @Resolver(() => Forum)
@@ -20,9 +22,9 @@ export class ForumResolver {
   }
 
   @Query(() => [Forum])
-  async getAllForum() {
+  async getForumsByDocument(@Args('id', {type: () => Int}) id:number) {
     try {
-      return await this.forumService.getAllForum();
+      return await this.forumService.getForumsByDocument(id);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -36,7 +38,26 @@ export class ForumResolver {
       throw new Error(error.message);
     }
   }
+
+  @Mutation(() => Forum)
+  updateForum(@Args('input') updateForumInput: UpdateForumInput){
+    try {
+      return this.forumService.updateForum(updateForumInput);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Mutation(()=> Boolean)
+  deleteForum(@Args('id', {type: () => Int}) id:number){
+    try {
+      return this.forumService.deleteForum(id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
+
 //------------------------------------Comment Methods------------------------------------
 @Resolver(() => Comment)
 export class CommentResolver {
@@ -50,11 +71,27 @@ export class CommentResolver {
       throw new Error(error.message);
     }
   }
+  @Mutation(() => Comment)
+  updateComment(@Args('input') updateCommentInput: UpdateCommentInput){
+    try {
+      return this.forumService.updateComment(updateCommentInput);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+  @Mutation(()=> Boolean)
+  deleteComment(@Args('id', {type: () => Int}) id:number){
+    try {
+      return this.forumService.deleteComment(id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 
   @Query(() => [Comment])
-  async getAllComment() {
+  async getCommentsByForum(@Args('id', {type: () => Int}) id:number) {
     try {
-      return await this.forumService.getAllComment();
+      return await this.forumService.getCommentsByForum(id);
     } catch (error) {
       throw new Error(error.message);
     }

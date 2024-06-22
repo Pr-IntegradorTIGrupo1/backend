@@ -17,7 +17,7 @@ export class Comment {
   @Field((type) => Int)
   id_user: number;
 
-  @ManyToOne(() => Forum, (forum) => forum.coments)
+  @ManyToOne(() => Forum, (forum) => forum.comments)
   @Field(() => Forum)
   forum: Forum;
 }

@@ -4,10 +4,6 @@ import { IsNotEmpty, IsEmail } from 'class-validator';
 @InputType()
 export class CreateForumInput {
   @IsNotEmpty()
-  @Field(() => Int)
-  id: number;
-
-  @IsNotEmpty()
   @Field()
   title: string;
 
@@ -18,4 +14,7 @@ export class CreateForumInput {
   @IsNotEmpty()
   @Field()
   id_document: number;
+  
+  @Field()
+  status:string;
 }
