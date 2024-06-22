@@ -5,18 +5,21 @@ import { IsNotEmpty, IsEmail } from 'class-validator';
 export class UpdateDocumentInput {
   @IsNotEmpty()
   @Field(() => Int)
-  id: number;
+  id_document: number;
 
-  @Field(()=>Int)
-  id_user:number;
+  @IsNotEmpty()
+  @Field(() => Int)
+  id_user: number;
 
-
-  @Field({ nullable: true })
+  @IsNotEmpty()
+  @Field()
   title: string;
 
-  @Field({ nullable: true })
+  @IsNotEmpty()
+  @Field()
   content: string;
 
-  @Field(() => Int, { nullable: true })
+  @IsNotEmpty()
+  @Field(() => Int)
   id_template: number;
 }

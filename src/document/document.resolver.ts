@@ -1,9 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { DocumentService } from './document.service';
-import { Document } from './entities/document.entity';
-import { Template } from './entities/template.entity';
+import { Document, DocumentResponse } from './entities/document.entity';
+import { Template, TemplateResponse } from './entities/template.entity';
 import { CreateDocumentInput } from './dto/create-document.input';
 import { CreateTemplateInput } from './dto/create-template.input';
+import { UpdateDocumentInput } from './dto/update-document.input';
 
 @Resolver(() => Document)
 export class DocumentResolver {
@@ -30,6 +31,17 @@ export class DocumentResolver {
   }
 
   @Query(() => [Document])
+  async getDocumentsByProject(
+    @Args('id_project', { type: () => Int }) id_project: number,
+  ) {
+    try {
+      return await this.documentService.getDocumentsByProject(id_project);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Document])
   async getAllDocument() {
     try {
       return await this.documentService.getAllDocument();
@@ -38,10 +50,39 @@ export class DocumentResolver {
     }
   }
 
-  @Mutation(() => Document)
+  @Query(() => [Document])
+  async getAllDocumentsLastVersion() {
+    try {
+      return await this.documentService.getAllDocumentsLastVersion();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Document])
+  async getAllDocumentsVersions(
+    @Args('id_document', { type: () => Int }) id_document: number,
+  ) {
+    try {
+      return await this.documentService.getAllDocumentsVersions(id_document);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Mutation(() => DocumentResponse)
   createDocument(@Args('input') createDocumentInput: CreateDocumentInput) {
     try {
       return this.documentService.createDocument(createDocumentInput);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Mutation(() => DocumentResponse)
+  updateDocument(@Args('input') updateDocumentInput: UpdateDocumentInput) {
+    try {
+      return this.documentService.updateDocument(updateDocumentInput);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -70,7 +111,7 @@ export class TemplateResolver {
     }
   }
 
-  @Mutation(() => Template)
+  @Mutation(() => TemplateResponse)
   createTemplate(@Args('input') createTemplateInput: CreateTemplateInput) {
     try {
       return this.documentService.createTemplate(createTemplateInput);

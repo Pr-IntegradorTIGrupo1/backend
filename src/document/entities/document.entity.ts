@@ -23,6 +23,10 @@ export class Document {
   id: number;
 
   @Column()
+  @Field()
+  id_document: string;
+
+  @Column()
   @Field(() => Int)
   id_project: number;
 
@@ -37,6 +41,14 @@ export class Document {
   @Column()
   @Field()
   timestamp: string;
+
+  @Column()
+  @Field()
+  read_only: boolean;
+
+  @Column()
+  @Field()
+  is_active: boolean;
 
   @OneToMany(() => Forum, (forum) => forum.document)
   @Field(() => [Forum])
@@ -54,4 +66,13 @@ export class Document {
   @OneToMany(() => Requirement, (requirement) => requirement.document)
   @Field(() => [Requirement])
   requirements: Requirement[];
+}
+
+@ObjectType()
+export class DocumentResponse {
+  @Field()
+  success: boolean;
+
+  @Field()
+  message: string;
 }

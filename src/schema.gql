@@ -25,13 +25,18 @@ type Template {
   documents: [Document!]!
 }
 
+type TemplateResponse {
+  success: Boolean!
+  message: String!
+}
+
 type Version {
   id: Int!
   id_user: Int!
   timestamp: String!
   version: Float!
+  last_version: Boolean!
   document: Document!
-  document_old: Document
 }
 
 type Requirement {
@@ -43,20 +48,31 @@ type Requirement {
 
 type Document {
   id: Int!
+  id_document: String!
   id_project: Int!
   id_user: Int!
   title: String!
   timestamp: String!
+  read_only: Boolean!
+  is_active: Boolean!
   forums: [Forum!]!
   template: Template!
   version: Version!
   requirements: [Requirement!]!
 }
 
+type DocumentResponse {
+  success: Boolean!
+  message: String!
+}
+
 type Query {
   getDocument(id: Int!): Document!
   getDocumentsByUser(id_user: Int!): [Document!]!
+  getDocumentsByProject(id_project: Int!): [Document!]!
   getAllDocument: [Document!]!
+  getAllDocumentsLastVersion: [Document!]!
+  getAllDocumentsVersions(id_document: Int!): [Document!]!
   getTemplate(id: Int!): Template!
   getAllTemplate: [Template!]!
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
@@ -69,9 +85,10 @@ input FindRequirementsById {
 }
 
 type Mutation {
-  createDocument(input: CreateDocumentInput!): Document!
-  createTemplate(input: CreateTemplateInput!): Template!
-  addRequirement(createRequirementInput: CreateRequirementInput!): Requirement!
+  createDocument(input: CreateDocumentInput!): DocumentResponse!
+  updateDocument(input: UpdateDocumentInput!): DocumentResponse!
+  createTemplate(input: CreateTemplateInput!): TemplateResponse!
+  addRequirement(input: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
@@ -82,6 +99,14 @@ input CreateDocumentInput {
   content: String!
   id_user: Int!
   id_project: Int!
+  id_template: Int!
+}
+
+input UpdateDocumentInput {
+  id_document: Int!
+  id_user: Int!
+  title: String!
+  content: String!
   id_template: Int!
 }
 
