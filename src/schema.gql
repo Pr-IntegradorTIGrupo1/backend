@@ -79,6 +79,8 @@ type Query {
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
   getForumsByDocument(id: Int!): [Forum!]!
+  getComment(id: Int!): Comment!
+  getCommentsByForum(id: Int!): [Comment!]!
 }
 
 input FindRequirementsById {
@@ -95,6 +97,9 @@ type Mutation {
   createForum(input: CreateForumInput!): Forum!
   updateForum(input: UpdateForumInput!): Forum!
   deleteForum(id: Int!): Boolean!
+  updateComment(input: UpdateCommentInput!): Comment!
+  deleteComment(id: Int!): Boolean!
+  createComment(input: CreateCommentInput!): Comment!
 }
 
 input CreateDocumentInput {
@@ -146,4 +151,15 @@ input UpdateForumInput {
   id_user: Int
   status: String!
   id: Int!
+}
+
+input UpdateCommentInput {
+  id: Int!
+  content: String!
+}
+
+input CreateCommentInput {
+  content: String!
+  id_user: Int!
+  id_forum: Int!
 }

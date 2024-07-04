@@ -23,7 +23,10 @@ export class ForumService {
 
   //------------------------------------Forum Methods------------------------------------
   async getForum(id: number): Promise<Forum> {
-    const forum =  await this.forumRepository.findOne({ where: { id } });
+    const forum =  await this.forumRepository.findOne({ where: { id },
+    relations:['comments'] },
+     
+    );
     if(!forum){
       throw new NotFoundException('Foro no encontrado');
     }
@@ -42,6 +45,7 @@ export class ForumService {
   async createForum(input: CreateForumInput): Promise<Forum> {
     const document = await this.documentRepository.findOne({
       where: { id: input.id_document },
+      relations:['forums']
     });
     if (!document) {
       throw new NotFoundException('Documento no encontrado');
@@ -106,6 +110,7 @@ export class ForumService {
   async createComment(input: CreateCommentInput): Promise<Comment> {
     const forum = await this.forumRepository.findOne({
       where: { id: input.id_forum },
+      relations:['comments']
     });
     if (!forum) {
       throw new NotFoundException('Foro no encontrado');
