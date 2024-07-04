@@ -14,7 +14,8 @@ type Forum {
   title: String!
   content: String!
   status: String!
-  coments: [Comment!]!
+  id_user: Int!
+  comments: [Comment!]!
   document: Document!
 }
 
@@ -77,7 +78,7 @@ type Query {
   getAllTemplate: [Template!]!
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
-  getAllForum: [Forum!]!
+  getForumsByDocument(id: Int!): [Forum!]!
 }
 
 input FindRequirementsById {
@@ -92,6 +93,8 @@ type Mutation {
   updateRequirement(input: UpdateRequirementInput!): Requirement!
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
+  updateForum(input: UpdateForumInput!): Forum!
+  deleteForum(id: Int!): Boolean!
 }
 
 input CreateDocumentInput {
@@ -129,8 +132,18 @@ input UpdateRequirementInput {
 }
 
 input CreateForumInput {
-  id: Int!
   title: String!
   content: String!
   id_document: Float!
+  id_user: Int!
+  status: String!
+}
+
+input UpdateForumInput {
+  title: String!
+  content: String!
+  id_document: Float
+  id_user: Int
+  status: String!
+  id: Int!
 }

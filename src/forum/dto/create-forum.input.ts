@@ -14,6 +14,10 @@ export class CreateForumInput {
   @IsNotEmpty()
   @Field()
   id_document: number;
+
+  @IsNotEmpty()
+  @Field(()=>Int)
+  id_user: number;  
   
   @Field()
   status:string;

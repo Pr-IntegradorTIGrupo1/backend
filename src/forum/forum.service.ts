@@ -50,6 +50,8 @@ export class ForumService {
     forum.content = input.content;
     forum.title = input.title;
     forum.document = document;
+    forum.status = input.status;
+    forum.id_user = input.id_user;
     const savedForum = await this.forumRepository.save(forum);
     document.forums.push(savedForum);
     await this.documentRepository.save(document);
