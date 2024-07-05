@@ -78,7 +78,7 @@ type Query {
   getAllTemplate: [Template!]!
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
-  getForumsByDocument(id: Int!): [Forum!]!
+  getForumsByDocument(id: String!): [Forum!]!
   getComment(id: Int!): Comment!
   getCommentsByForum(id: Int!): [Comment!]!
 }
