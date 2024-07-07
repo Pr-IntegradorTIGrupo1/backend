@@ -2,10 +2,45 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Project {
+  id: Int!
+  name: String!
+  users: [User!]!
+  documents: [Document!]!
+}
+
+type ProjectResponse {
+  success: Boolean!
+  message: String!
+}
+
+type Version {
+  id: Int!
+  timestamp: String!
+  version: Int!
+  last_version: Boolean!
+  user: User!
+  document: Document!
+}
+
+type User {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  rut: String!
+  projects: [Project!]!
+  documents: [Document!]!
+  versions: [Version!]!
+  comments: [Comment!]!
+  forums: [Forum!]!
+}
+
 type Comment {
   id: Int!
   content: String!
   id_user: Int!
+  user: User!
   forum: Forum!
 }
 
@@ -14,7 +49,7 @@ type Forum {
   title: String!
   content: String!
   status: String!
-  id_user: Int!
+  user: User!
   comments: [Comment!]!
   document: Document!
 }
@@ -31,15 +66,6 @@ type TemplateResponse {
   message: String!
 }
 
-type Version {
-  id: Int!
-  id_user: Int!
-  timestamp: String!
-  version: Int!
-  last_version: Boolean!
-  document: Document!
-}
-
 type Requirement {
   id: Int!
   content: String!
@@ -50,12 +76,12 @@ type Requirement {
 type Document {
   id: Int!
   id_document: String!
-  id_project: Int!
-  id_user: Int!
   title: String!
   timestamp: String!
   read_only: Boolean!
   is_active: Boolean!
+  user: User!
+  project: Project!
   forums: [Forum!]!
   template: Template!
   version: Version!
@@ -81,6 +107,8 @@ type Query {
   getForumsByDocument(id: String!): [Forum!]!
   getComment(id: Int!): Comment!
   getCommentsByForum(id: Int!): [Comment!]!
+  user(id: Int!): User!
+  project: [Project!]!
 }
 
 input FindRequirementsById {
@@ -101,6 +129,11 @@ type Mutation {
   updateComment(input: UpdateCommentInput!): Comment!
   deleteComment(id: Int!): Boolean!
   createComment(input: CreateCommentInput!): Comment!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
+  createProject(input: CreateProjectInput!): ProjectResponse!
+  validateToken(input: ValidateTokenInput!): User!
 }
 
 input CreateDocumentInput {
@@ -163,4 +196,23 @@ input CreateCommentInput {
   content: String!
   id_user: Int!
   id_forum: Int!
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateProjectInput {
+  name: String!
+}
+
+input ValidateTokenInput {
+  token: String!
 }
