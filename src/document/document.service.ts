@@ -9,6 +9,8 @@ import { Template, TemplateResponse } from './entities/template.entity';
 import { UpdateDocumentInput } from './dto/update-document.input';
 import { CreateTemplateInput } from './dto/create-template.input';
 import { RequirementService } from 'src/requirement/requirement.service';
+import { User } from 'src/user/entities/user.entity';
+import { Project } from 'src/project/entities/project.entity';
 
 @Injectable()
 export class DocumentService {
@@ -22,6 +24,10 @@ export class DocumentService {
     private versionRepository: Repository<Version>,
     @InjectRepository(Requirement)
     private requirementRepository: Repository<Requirement>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Project)
+    private projectRepository: Repository<Project>,
   ) {}
   //------------------------------------Other Methods------------------------------------
   // Generate a random id for the document
@@ -65,16 +71,30 @@ export class DocumentService {
   // Get documents by user id
   async getDocumentsByUser(id_user: number): Promise<Document[]> {
     return await this.documentRepository.find({
-      where: { id_user },
-      relations: ['requirements', 'version', 'template', 'forums'],
+      where: { user: { id: id_user } },
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
     });
   }
 
   // Get last version documents by project id
   async getDocumentsByProject(id_project: number): Promise<Document[]> {
     let documents = await this.documentRepository.find({
-      where: { id_project },
-      relations: ['requirements', 'version', 'template', 'forums'],
+      where: { project: { id: id_project } },
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
     });
 
     documents = documents.filter(
@@ -87,14 +107,28 @@ export class DocumentService {
   // Get all documents
   async getAllDocument(): Promise<Document[]> {
     return await this.documentRepository.find({
-      relations: ['requirements', 'version', 'template', 'forums'],
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
     });
   }
 
   // Get all last version documents
   async getAllDocumentsLastVersion(): Promise<Document[]> {
     let documents = await this.documentRepository.find({
-      relations: ['requirements', 'version', 'template', 'forums'],
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
     });
 
     documents = documents.filter(
@@ -118,7 +152,14 @@ export class DocumentService {
     // Find all versions of the document
     let documents = await this.documentRepository.find({
       where: { id_document: document.id_document },
-      relations: ['requirements', 'version', 'template', 'forums'],
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
       order: { version: { version: 'DESC' } },
     });
 
@@ -143,8 +184,12 @@ export class DocumentService {
 
   // Create a new version of a document
   async createVersion(document: Document, idUser: number) {
+    const user = await this.userRepository.findOne({ where: { id: idUser } });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
     const version = await this.versionRepository.create({
-      id_user: idUser,
+      user,
       timestamp: new Date().toISOString().slice(0, 16),
       version: 1,
       document: document,
@@ -160,8 +205,12 @@ export class DocumentService {
     versionNumber: number,
     document: Document,
   ) {
+    const user = await this.userRepository.findOne({ where: { id: idUser } });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
     const version = await this.versionRepository.create({
-      id_user: idUser,
+      user,
       timestamp: new Date().toISOString().slice(0, 16),
       version: versionNumber + 1,
       document: document,
@@ -200,13 +249,23 @@ export class DocumentService {
     if (!template) {
       throw new Error('Plantilla no encontrada');
     }
+    const user = await this.userRepository.findOne({ where: { id: id_user } });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    const project = await this.projectRepository.findOne({
+      where: { id: input.id_project },
+    });
+    if (!project) {
+      throw new Error('Proyecto no encontrado');
+    }
 
     const document = new Document();
     document.id_document = await this.generateUniqueRandomId();
-    document.id_user = id_user;
+    document.user = user;
     document.title = title;
     document.template = template;
-    document.id_project = input.id_project;
+    document.project = project;
     const fechaActual = new Date();
     const fechaString = fechaActual.toISOString().slice(0, 16);
     document.timestamp = fechaString;
@@ -242,6 +301,14 @@ export class DocumentService {
       throw new Error('Plantilla no encontrada');
     }
 
+    // Find user
+    const user = await this.userRepository.findOne({
+      where: { id: input.id_user },
+    });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+
     // Check if document is read only
     if (document_old.read_only) {
       throw new Error('Documento no se puede actualizar');
@@ -251,11 +318,11 @@ export class DocumentService {
 
     // Create new document
     const document_new = this.documentRepository.create({
-      id_user: input.id_user,
+      user: user,
       id_document: document_old.id_document,
       title: input.title,
       template: template,
-      id_project: document_old.id_project,
+      project: document_old.project,
       read_only: false,
       is_active: true,
       timestamp: new Date().toISOString().slice(0, 16),

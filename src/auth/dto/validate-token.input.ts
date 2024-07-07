@@ -2,8 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
 
 @InputType()
-export class CreateProjectInput {
+export class ValidateTokenInput {
   @IsNotEmpty()
   @Field()
-  name: string;
+  token: string;
 }

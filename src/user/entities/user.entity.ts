@@ -2,12 +2,10 @@ import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToMany,
-  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Document } from '../../document/entities/document.entity';
 import { Project } from 'src/project/entities/project.entity';
@@ -17,6 +15,7 @@ import { Forum } from 'src/forum/entities/forum.entity';
 
 @Entity()
 @ObjectType()
+@Unique(['rut'])
 export class User {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

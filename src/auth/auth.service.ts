@@ -1,26 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthInput } from './dto/create-auth.input';
-import { UpdateAuthInput } from './dto/update-auth.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as dotenv from 'dotenv';
+import { User, UserResponse } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
+import { ValidateTokenInput } from './dto/validate-token.input';
+import { Project } from 'src/project/entities/project.entity';
+const jwt = require('jsonwebtoken');
+
+dotenv.config();
 
 @Injectable()
 export class AuthService {
-  create(createAuthInput: CreateAuthInput) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Project)
+    private projectRepository: Repository<Project>,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async validateToken(input: ValidateTokenInput): Promise<User> {
+    const decoded = jwt.verify(input.token, process.env.JWT_SECRET);
+    let found = await this.userRepository.findOne({
+      where: { rut: decoded.rut },
+      relations: ['projects'],
+    });
+    if (!found) {
+      let user = this.userRepository.create({
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+        email: decoded.email,
+        rut: decoded.rut,
+      });
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      const projects = await this.projectRepository.find();
 
-  update(id: number, updateAuthInput: UpdateAuthInput) {
-    return `This action updates a #${id} auth`;
-  }
+      const randomIndex = Math.floor(Math.random() * projects.length);
+      const selectedProject = projects[randomIndex];
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      user.projects = [selectedProject];
+
+      await this.userRepository.save(user);
+      const newUser = await this.userRepository.findOne({
+        where: { rut: decoded.rut },
+        relations: ['projects'],
+      });
+      return newUser;
+    } else {
+      found.firstName = decoded.firstName;
+      found.lastName = decoded.lastName;
+      found.email = decoded.email;
+      this.userRepository.save(found);
+      return found;
+    }
   }
 }
