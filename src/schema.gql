@@ -107,8 +107,7 @@ type Query {
   getForumsByDocument(id: String!): [Forum!]!
   getComment(id: Int!): Comment!
   getCommentsByForum(id: Int!): [Comment!]!
-  user(id: Int!): User!
-  project: [Project!]!
+  getUser(id: Int!): User!
 }
 
 input FindRequirementsById {
@@ -129,9 +128,6 @@ type Mutation {
   updateComment(input: UpdateCommentInput!): Comment!
   deleteComment(id: Int!): Boolean!
   createComment(input: CreateCommentInput!): Comment!
-  createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User!
   createProject(input: CreateProjectInput!): ProjectResponse!
   validateToken(input: ValidateTokenInput!): User!
 }
@@ -196,17 +192,6 @@ input CreateCommentInput {
   content: String!
   id_user: Int!
   id_forum: Int!
-}
-
-input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input CreateProjectInput {

@@ -11,9 +11,4 @@ export class ProjectResolver {
   createProject(@Args('input') createProjectInput: CreateProjectInput) {
     return this.projectService.createProject(createProjectInput);
   }
-
-  @Query(() => [Project], { name: 'project' })
-  findAll() {
-    return this.projectService.findAll();
-  }
 }
