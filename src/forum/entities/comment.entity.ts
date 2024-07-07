@@ -14,10 +14,6 @@ export class Comment {
   @Field()
   content: string;
 
-  @Column()
-  @Field(() => Int)
-  id_user: number;
-
   @ManyToOne(() => User, (user) => user.comments)
   @Field(() => User)
   user: User;

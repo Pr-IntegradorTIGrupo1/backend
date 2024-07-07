@@ -3,12 +3,19 @@ import { CreateForumInput } from './dto/create-forum.input';
 import { Forum } from './entities/forum.entity';
 import { Comment } from './entities/comment.entity';
 import { Document } from 'src/document/entities/document.entity';
-import { Not, Repository } from 'typeorm';
+import {
+  Connection,
+  DataSource,
+  EntityManager,
+  Not,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { relative } from 'path';
 import { UpdateCommentInput } from './dto/update-comment.input';
 import { UpdateForumInput } from './dto/update-forum.input';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ForumService {
@@ -19,87 +26,101 @@ export class ForumService {
     private commentRepository: Repository<Comment>,
     @InjectRepository(Document)
     private documentRepository: Repository<Document>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private dataSource: DataSource,
   ) {}
 
   //------------------------------------Forum Methods------------------------------------
   async getForum(id: number): Promise<Forum> {
-    const forum =  await this.forumRepository.findOne({ where: { id },
-    relations:['comments'] },
-     
-    );
-    if(!forum){
+    const forum = await this.forumRepository.findOne({
+      where: { id },
+      relations: ['comments', 'document', 'user'],
+    });
+    if (!forum) {
       throw new NotFoundException('Foro no encontrado');
     }
     return forum;
   }
 
-
   //retorna los foros de un documento
   async getForumsByDocument(id_document: string): Promise<Forum[]> {
-    const document = await this.documentRepository.findOne({where:{id_document:id_document},relations:['forums','forums.comments']});
-    if(!document){
+    const document = await this.documentRepository.findOne({
+      where: { id_document: id_document },
+      relations: ['forums', 'forums.comments'],
+    });
+    if (!document) {
       throw new NotFoundException('documento no encontrado');
     }
     const forums_documents = document.forums;
 
-    if(!forums_documents){
+    if (!forums_documents) {
       throw new NotFoundException('Foro no encontrado');
     }
     return forums_documents;
   }
 
-
   async createForum(input: CreateForumInput): Promise<Forum> {
-    const document = await this.documentRepository.findOne({
-      where: { id: input.id_document },
-      relations:['forums']
+    return await this.dataSource.transaction(async (manager) => {
+      const document = await manager.findOne(Document, {
+        where: { id: input.id_document },
+        relations: ['forums'],
+      });
+      if (!document) {
+        throw new NotFoundException('Documento no encontrado');
+      }
+
+      const user = await manager.findOne(User, {
+        where: { id: input.id_user },
+        relations: ['forums'],
+      });
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const forum = new Forum();
+      forum.content = input.content;
+      forum.title = input.title;
+      forum.document = document;
+      forum.status = input.status;
+      forum.user = user;
+
+      const savedForum = await manager.save(forum);
+
+      user.forums.push(savedForum);
+      await manager.save(user);
+
+      document.forums.push(savedForum);
+      await manager.save(document);
+
+      return savedForum;
     });
-    if (!document) {
-      throw new NotFoundException('Documento no encontrado');
-    }
-    const forum = new Forum();
-    forum.content = input.content;
-    forum.title = input.title;
-    forum.document = document;
-    forum.status = input.status;
-    forum.id_user = input.id_user;
-    const savedForum = await this.forumRepository.save(forum);
-    document.forums.push(savedForum);
-    await this.documentRepository.save(document);
-    return savedForum;
   }
 
-  async updateForum(input:UpdateForumInput):Promise<Forum>{
-    const forum = await this.forumRepository.findOne({ where: { id:input.id } });
+  async updateForum(input: UpdateForumInput): Promise<Forum> {
+    const forum = await this.forumRepository.findOne({
+      where: { id: input.id },
+    });
     if (!forum) {
       throw new NotFoundException('Foro no encontrado');
     }
     forum.title = input.title;
     forum.content = input.content;
-    forum.status  = input.status;
-    return await this.forumRepository.save(forum); 
-  }
-  async deleteForum(id: number): Promise<boolean> {
-    const forum = await this.forumRepository.findOne({ where: { id } });
-    if (!forum) {
-      throw new NotFoundException('Foro no encontrado');
-    }
-    await this.forumRepository.delete(id);
-    return true;
+    forum.status = input.status;
+    return await this.forumRepository.save(forum);
   }
 
   //------------------------------------Comment Methods------------------------------------
-  async getComment(id: number): Promise<Comment> {
-    return await this.commentRepository.findOne({ where: { id } });
-  }
-  async updateComment(input:UpdateCommentInput): Promise<Comment> {
-    const comment = await this.commentRepository.findOne({ where: { id:input.id } });
+
+  async updateComment(input: UpdateCommentInput): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: input.id },
+    });
     if (!comment) {
       throw new Error('Comentario no encontrado');
     }
     comment.content = input.content;
-    return await this.commentRepository.save(comment); 
-
+    return await this.commentRepository.save(comment);
   }
 
   async getCommentsByForum(id_forum: number): Promise<Comment[]> {
@@ -115,29 +136,32 @@ export class ForumService {
   }
 
   async createComment(input: CreateCommentInput): Promise<Comment> {
-    const forum = await this.forumRepository.findOne({
-      where: { id: input.id_forum },
-      relations:['comments']
+    return this.dataSource.transaction(async (manager: EntityManager) => {
+      const forum = await manager.findOne(Forum, {
+        where: { id: input.id_forum },
+        relations: ['comments'],
+      });
+      if (!forum) {
+        throw new NotFoundException('Foro no encontrado');
+      }
+      const user = await manager.findOne(User, {
+        where: { id: input.id_user },
+        relations:['comments']
+      });
+      if (!user) {
+        throw new NotFoundException('usuario no encontrado');
+      }
+      const comment = manager.create(Comment, {
+        content: input.content,
+        forum: forum,
+        user: user
+      });
+      const savedComment = await manager.save(comment);
+      // Actualizar la lista de comentarios en el foro y
+      forum.comments.push(savedComment);
+      user.comments.push(savedComment);
+      await manager.save([user, forum]);
+      return savedComment;
     });
-    if (!forum) {
-      throw new NotFoundException('Foro no encontrado');
-    }
-    const comment = new Comment();
-    comment.content = input.content;
-    comment.forum = forum;
-    comment.id_user = input.id_user;
-    const savedComment = await this.commentRepository.save(comment);
-    // Actualizar la lista de comentarios en el foro
-    forum.comments.push(savedComment);
-    await this.forumRepository.save(forum);
-    return savedComment;
-  }
-  async deleteComment(id: number): Promise<boolean> {
-    const comment = await this.commentRepository.findOne({ where: { id } });
-    if (!comment) {
-      throw new NotFoundException('Comentario no encontrado');
-    }
-    await this.commentRepository.delete(id);
-    return true;
   }
 }
