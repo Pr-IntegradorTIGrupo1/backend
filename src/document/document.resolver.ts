@@ -87,6 +87,15 @@ export class DocumentResolver {
       throw new Error(error.message);
     }
   }
+
+  @Mutation(() => DocumentResponse)
+  deleteDocument(@Args('id', { type: () => Int }) id: number) {
+    try {
+      return this.documentService.deleteDocument(id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 @Resolver(() => Template)

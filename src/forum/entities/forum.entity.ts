@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Document } from 'src/document/entities/document.entity';
 import { Comment } from './comment.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 @ObjectType()
@@ -28,9 +29,9 @@ export class Forum {
   @Field()
   status: string;
 
-  @Column()
-  @Field(()=>Int)
-  id_user:number;
+  @ManyToOne(() => User, (user) => user.forums)
+  @Field(() => User)
+  user: User;
 
   @OneToMany(() => Comment, (comment) => comment.forum)
   @Field(() => [Comment])

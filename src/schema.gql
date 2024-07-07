@@ -35,7 +35,7 @@ type Version {
   id: Int!
   id_user: Int!
   timestamp: String!
-  version: Float!
+  version: Int!
   last_version: Boolean!
   document: Document!
 }
@@ -90,6 +90,7 @@ input FindRequirementsById {
 type Mutation {
   createDocument(input: CreateDocumentInput!): DocumentResponse!
   updateDocument(input: UpdateDocumentInput!): DocumentResponse!
+  deleteDocument(id: Int!): DocumentResponse!
   createTemplate(input: CreateTemplateInput!): TemplateResponse!
   addRequirement(input: CreateRequirementInput!): Requirement!
   updateRequirement(input: UpdateRequirementInput!): Requirement!

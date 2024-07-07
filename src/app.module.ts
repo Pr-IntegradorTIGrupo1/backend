@@ -7,6 +7,9 @@ import * as dotenv from 'dotenv';
 import { DocumentModule } from './document/document.module';
 import { RequirementModule } from './requirement/requirement.module';
 import { ForumModule } from './forum/forum.module';
+import { UserModule } from './user/user.module';
+import { ProjectModule } from './project/project.module';
+import { AuthModule } from './auth/auth.module';
 
 dotenv.config();
 
@@ -29,6 +32,9 @@ dotenv.config();
     DocumentModule,
     RequirementModule,
     ForumModule,
+    UserModule,
+    ProjectModule,
+    AuthModule,
   ],
   providers: [],
 })

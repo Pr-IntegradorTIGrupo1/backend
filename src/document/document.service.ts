@@ -171,6 +171,25 @@ export class DocumentService {
     await this.documentRepository.save(document);
   }
 
+  async deleteVersion(id: number) {
+    const document = await this.documentRepository.findOne({
+      where: { id },
+      relations: ['version'],
+    });
+    if (!document) {
+      throw new Error('Documento no encontrado');
+    }
+
+    document.version.last_version = false;
+    await this.versionRepository.save(document.version);
+
+    const success = true;
+    const message = 'Versión eliminada exitosamente';
+    const response = { success, message };
+
+    return response;
+  }
+
   // Create a new document
   async createDocument(input: CreateDocumentInput): Promise<DocumentResponse> {
     const { id_template, id_user, title, content } = input;
@@ -256,6 +275,25 @@ export class DocumentService {
 
     const success = true;
     const message = 'Documento actualizado exitosamente';
+    const response = { success, message };
+
+    return response;
+  }
+
+  async deleteDocument(id: number): Promise<DocumentResponse> {
+    const document = await this.documentRepository.findOne({
+      where: { id },
+      relations: ['version'],
+    });
+    if (!document) {
+      throw new Error('Documento no encontrado');
+    }
+
+    document.is_active = false;
+    await this.documentRepository.save(document);
+
+    const success = true;
+    const message = 'Documento eliminado exitosamente';
     const response = { success, message };
 
     return response;
