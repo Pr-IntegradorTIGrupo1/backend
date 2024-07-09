@@ -33,7 +33,8 @@ export class Forum {
   @Field(() => User)
   user: User;
 
-  @OneToMany(() => Comment, (comment) => comment.forum)
+  @OneToMany(() => Comment, (comment) => comment.forum, 
+  {cascade:['remove'],})
   @Field(() => [Comment])
   comments: Comment[];
 

@@ -39,7 +39,6 @@ type User {
 type Comment {
   id: Int!
   content: String!
-  id_user: Int!
   user: User!
   forum: Forum!
 }
@@ -105,7 +104,6 @@ type Query {
   requirementsByDocument(input: FindRequirementsById!): [Requirement!]!
   getForum(id: Int!): Forum!
   getForumsByDocument(id: String!): [Forum!]!
-  getComment(id: Int!): Comment!
   getCommentsByForum(id: Int!): [Comment!]!
   getUser(id: Int!): User!
 }
@@ -124,9 +122,7 @@ type Mutation {
   removeRequirement(id: Int!): Requirement!
   createForum(input: CreateForumInput!): Forum!
   updateForum(input: UpdateForumInput!): Forum!
-  deleteForum(id: Int!): Boolean!
   updateComment(input: UpdateCommentInput!): Comment!
-  deleteComment(id: Int!): Boolean!
   createComment(input: CreateCommentInput!): Comment!
   createProject(input: CreateProjectInput!): ProjectResponse!
   validateToken(input: ValidateTokenInput!): User!

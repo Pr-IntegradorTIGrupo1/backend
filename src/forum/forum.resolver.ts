@@ -48,14 +48,7 @@ export class ForumResolver {
     }
   }
 
-  @Mutation(()=> Boolean)
-  deleteForum(@Args('id', {type: () => Int}) id:number){
-    try {
-      return this.forumService.deleteForum(id);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
+
 }
 
 //------------------------------------Comment Methods------------------------------------
@@ -63,26 +56,11 @@ export class ForumResolver {
 export class CommentResolver {
   constructor(private readonly forumService: ForumService) {}
 
-  @Query(() => Comment)
-  getComment(@Args('id', { type: () => Int }) id: number) {
-    try {
-      return this.forumService.getComment(id);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
+
   @Mutation(() => Comment)
   updateComment(@Args('input') updateCommentInput: UpdateCommentInput){
     try {
       return this.forumService.updateComment(updateCommentInput);
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-  @Mutation(()=> Boolean)
-  deleteComment(@Args('id', {type: () => Int}) id:number){
-    try {
-      return this.forumService.deleteComment(id);
     } catch (error) {
       throw new Error(error.message);
     }

@@ -8,7 +8,7 @@ import { Document } from 'src/document/entities/document.entity';
 import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment, Forum, Document, User])],
-  providers: [ForumResolver, ForumService, CommentResolver],
+  imports: [TypeOrmModule.forFeature([Comment, Forum, Document,User])],
+  providers: [ForumResolver, ForumService,CommentResolver],
 })
 export class ForumModule {}
