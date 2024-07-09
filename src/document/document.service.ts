@@ -63,15 +63,22 @@ export class DocumentService {
   // Get document by id
   async getDocument(id: number): Promise<Document> {
     return await this.documentRepository.findOne({
-      where: { id },
-      relations: ['requirements', 'version', 'template', 'forums'],
+      where: { id, is_active: true },
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
     });
   }
 
   // Get documents by user id
   async getDocumentsByUser(id_user: number): Promise<Document[]> {
     return await this.documentRepository.find({
-      where: { user: { id: id_user } },
+      where: { user: { id: id_user }, is_active: true },
       relations: [
         'requirements',
         'version',
@@ -86,7 +93,28 @@ export class DocumentService {
   // Get last version documents by project id
   async getDocumentsByProject(id_project: number): Promise<Document[]> {
     let documents = await this.documentRepository.find({
-      where: { project: { id: id_project } },
+      where: { project: { id: id_project }, is_active: true },
+      relations: [
+        'requirements',
+        'version',
+        'template',
+        'forums',
+        'user',
+        'project',
+      ],
+    });
+
+    documents = documents.filter(
+      (document) => document.version.last_version === true,
+    );
+
+    return documents;
+  }
+
+  // Get last version documents by projects ids
+  async getDocumentsByProjects(id_projects: number[]): Promise<Document[]> {
+    let documents = await this.documentRepository.find({
+      where: { project: In(id_projects), is_active: true },
       relations: [
         'requirements',
         'version',
@@ -107,6 +135,7 @@ export class DocumentService {
   // Get all documents
   async getAllDocument(): Promise<Document[]> {
     return await this.documentRepository.find({
+      where: { is_active: true },
       relations: [
         'requirements',
         'version',
@@ -121,6 +150,7 @@ export class DocumentService {
   // Get all last version documents
   async getAllDocumentsLastVersion(): Promise<Document[]> {
     let documents = await this.documentRepository.find({
+      where: { is_active: true },
       relations: [
         'requirements',
         'version',
@@ -142,7 +172,7 @@ export class DocumentService {
   async getAllDocumentsVersions(id_document: number): Promise<Document[]> {
     // Find document
     const document = await this.documentRepository.findOne({
-      where: { id: id_document },
+      where: { id: id_document, is_active: true },
       relations: ['version'],
     });
 
@@ -151,7 +181,7 @@ export class DocumentService {
     }
     // Find all versions of the document
     let documents = await this.documentRepository.find({
-      where: { id_document: document.id_document },
+      where: { id_document: document.id_document, is_active: true },
       relations: [
         'requirements',
         'version',
@@ -229,8 +259,21 @@ export class DocumentService {
       throw new Error('Documento no encontrado');
     }
 
+    const newLastVersion = await this.documentRepository.findOne({
+      where: {
+        id_document: document.id_document,
+        is_active: true,
+        version: { version: document.version.version - 1 },
+      },
+      relations: ['version'],
+    });
+
     document.version.last_version = false;
+    newLastVersion.version.last_version = true;
+    newLastVersion.read_only = false;
     await this.versionRepository.save(document.version);
+    await this.versionRepository.save(newLastVersion.version);
+    await this.documentRepository.save(newLastVersion);
 
     const success = true;
     const message = 'Versión eliminada exitosamente';
@@ -287,7 +330,7 @@ export class DocumentService {
     // Find old document
     const document_old = await this.documentRepository.findOne({
       where: { id: input.id_document },
-      relations: ['version'],
+      relations: ['version', 'project'],
     });
     if (!document_old) {
       throw new Error('Documento no encontrado');
@@ -349,14 +392,17 @@ export class DocumentService {
 
   async deleteDocument(id: number): Promise<DocumentResponse> {
     const document = await this.documentRepository.findOne({
-      where: { id },
+      where: { id, is_active: true },
       relations: ['version'],
     });
     if (!document) {
       throw new Error('Documento no encontrado');
     }
 
+    await this.deleteVersion(document.id);
+
     document.is_active = false;
+    document.read_only = true;
     await this.documentRepository.save(document);
 
     const success = true;
