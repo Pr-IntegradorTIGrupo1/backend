@@ -42,7 +42,22 @@ export class ForumService {
     }
     return forum;
   }
-
+  async getForumByIdDocument(id: number): Promise<Forum[]> {
+    const document = await this.documentRepository.findOne({
+      where: {id: id },
+      relations: ['forums', 'forums.comments'],
+    });
+  
+    if (!document) {
+      throw new NotFoundException('Documento no encontrado');
+    }
+  
+    if (!document.forums) {
+      throw new NotFoundException('Documento sin foros');
+    }
+  
+    return document.forums;
+  }
   //retorna los foros de un documento
   async getForumsByDocument(id_document: string): Promise<Forum[]> {
     const document = await this.documentRepository.findOne({
