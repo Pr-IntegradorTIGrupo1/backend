@@ -58,21 +58,27 @@ export class ForumService {
   
     return document.forums;
   }
-  //retorna los foros de un documento
   async getForumsByDocument(id_document: string): Promise<Forum[]> {
-    const document = await this.documentRepository.findOne({
+    // Buscar todos los documentos que pertenecen al grupo de documento
+    const documents: Document[] = await this.documentRepository.find({
       where: { id_document: id_document },
-      relations: ['forums', 'forums.comments' ],
+      relations: ['forums', 'forums.comments'],
     });
-    if (!document) {
-      throw new NotFoundException('documento no encontrado');
+  
+    // Verificar si se encontraron documentos
+    if (documents.length === 0) {
+      throw new NotFoundException('No se encontraron documentos con este id_document');
     }
-    const forums_documents = document.forums;
-
-    if (!forums_documents) {
-      throw new NotFoundException('documento sin foros');
+  
+    // Recopilar todos los foros de todos los documentos encontrados
+    const allForums: Forum[] = documents.flatMap(doc => doc.forums || []);
+  
+    // Verificar si se encontraron foros
+    if (allForums.length === 0) {
+      throw new NotFoundException('No se encontraron foros para este grupo de documentos');
     }
-    return forums_documents;
+  
+    return allForums;
   }
 
   async createForum(input: CreateForumInput): Promise<Forum> {
