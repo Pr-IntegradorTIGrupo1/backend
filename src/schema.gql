@@ -166,7 +166,7 @@ input UpdateRequirementInput {
 input CreateForumInput {
   title: String!
   content: String!
-  id_document: Float!
+  id_document: Int!
   id_user: Int!
   status: String!
 }
@@ -174,7 +174,7 @@ input CreateForumInput {
 input UpdateForumInput {
   title: String!
   content: String!
-  id_document: Float
+  id_document: Int
   id_user: Int
   status: String!
   id: Int!
