@@ -59,7 +59,6 @@ export class ForumService {
     return document.forums;
   }
   async getForumsByDocument(id_document: string): Promise<Forum[]> {
-    // Buscar todos los documentos que pertenecen al grupo de documento
     const documents: Document[] = await this.documentRepository.find({
       where: { id_document: id_document },
       relations: ['forums', 'forums.comments'],
