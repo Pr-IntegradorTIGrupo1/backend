@@ -8,6 +8,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Forum } from 'src/forum/entities/forum.entity';
@@ -19,6 +20,7 @@ import { Project } from 'src/project/entities/project.entity';
 
 @Entity()
 @ObjectType()
+@Unique(['title', 'projectId'])
 export class Document {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
