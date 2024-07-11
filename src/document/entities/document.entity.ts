@@ -20,7 +20,6 @@ import { Project } from 'src/project/entities/project.entity';
 
 @Entity()
 @ObjectType()
-@Unique(['title', 'projectId'])
 export class Document {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -52,6 +51,7 @@ export class Document {
 
   @ManyToOne(() => Project, (project) => project.documents)
   @Field(() => Project)
+  @JoinColumn({ name: 'projectId' })
   project: Project;
 
   @OneToMany(() => Forum, (forum) => forum.document)
@@ -60,7 +60,7 @@ export class Document {
 
   @ManyToOne(() => Template, (template) => template.documents)
   @Field(() => Template)
-  @JoinColumn()
+  @JoinColumn({ name: 'templateId' })
   template: Template;
 
   @OneToOne(() => Version, (version) => version.document)

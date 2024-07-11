@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateDocumentInput } from './dto/create-document.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Document, DocumentResponse } from './entities/document.entity';
 import { Requirement } from 'src/requirement/entities/requirement.entity';
 import { Version } from './entities/version.entity';
@@ -284,18 +284,21 @@ export class DocumentService {
 
   // Create a new document
   async createDocument(input: CreateDocumentInput): Promise<DocumentResponse> {
-    const { id_template, id_user, title, content } = input;
     //verificamos que existe el template
     const template = await this.templateRepository.findOne({
-      where: { id: id_template },
+      where: { id: input.id_template },
     });
     if (!template) {
       throw new Error('Plantilla no encontrada');
     }
-    const user = await this.userRepository.findOne({ where: { id: id_user } });
+    const user = await this.userRepository.findOne({
+      where: { id: input.id_user },
+      relations: ['projects'],
+    });
     if (!user) {
       throw new Error('Usuario no encontrado');
     }
+
     const project = await this.projectRepository.findOne({
       where: { id: input.id_project },
     });
@@ -303,10 +306,24 @@ export class DocumentService {
       throw new Error('Proyecto no encontrado');
     }
 
+    const foundProject = user.projects.some(
+      (project) => project.id === input.id_project,
+    );
+    if (!foundProject) {
+      throw new Error('Usuario no pertenece al proyecto');
+    }
+
+    const sameTitle = await this.documentRepository.findOne({
+      where: { title: input.title, project: { id: input.id_project } },
+    });
+    if (sameTitle) {
+      throw new Error('Ya existe un documento con ese título en el proyecto');
+    }
+
     const document = new Document();
     document.id_document = await this.generateUniqueRandomId();
     document.user = user;
-    document.title = title;
+    document.title = input.title;
     document.template = template;
     document.project = project;
     const fechaActual = new Date();
@@ -315,8 +332,8 @@ export class DocumentService {
     document.read_only = false;
     document.is_active = true;
     const saveDocument = await this.documentRepository.save(document);
-    this.createRequirements(content, saveDocument);
-    this.createVersion(document, id_user);
+    this.createRequirements(input.content, saveDocument);
+    this.createVersion(document, input.id_user);
 
     const success = true;
     const message = 'Documento creado exitosamente';
@@ -350,6 +367,17 @@ export class DocumentService {
     });
     if (!user) {
       throw new Error('Usuario no encontrado');
+    }
+
+    const sameTitle = await this.documentRepository.findOne({
+      where: {
+        id: Not(document_old.id),
+        title: input.title,
+        project: { id: document_old.project.id },
+      },
+    });
+    if (sameTitle) {
+      throw new Error('Ya existe un documento con ese título en el proyecto');
     }
 
     // Check if document is read only
