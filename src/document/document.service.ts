@@ -371,7 +371,7 @@ export class DocumentService {
 
     const sameTitle = await this.documentRepository.findOne({
       where: {
-        id: Not(document_old.id),
+        id_document: Not(document_old.id_document),
         title: input.title,
         project: { id: document_old.project.id },
       },
