@@ -22,6 +22,15 @@ export class ForumResolver {
   }
 
   @Query(() => [Forum])
+  async getForumsByIdDocument(@Args('id', { type: () => Int }) id: number) {
+    try {
+      return await this.forumService.getForumByIdDocument(id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  @Query(() => [Forum])
   async getForumsByDocument(@Args('id', {type: () => String}) id:string) {
     try {
       return await this.forumService.getForumsByDocument(id);

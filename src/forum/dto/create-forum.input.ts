@@ -12,7 +12,7 @@ export class CreateForumInput {
   content: string;
 
   @IsNotEmpty()
-  @Field()
+  @Field(()=>Int)
   id_document: number;
 
   @IsNotEmpty()
