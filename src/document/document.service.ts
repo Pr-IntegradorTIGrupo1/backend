@@ -371,7 +371,7 @@ export class DocumentService {
 
     const sameTitle = await this.documentRepository.findOne({
       where: {
-        id: Not(document_old.id),
+        id_document: Not(document_old.id_document),
         title: input.title,
         project: { id: document_old.project.id },
       },
@@ -425,6 +425,10 @@ export class DocumentService {
     });
     if (!document) {
       throw new Error('Documento no encontrado');
+    }
+
+    if (document.read_only) {
+      throw new Error('Solo se puede eliminar la ultima versión del documento');
     }
 
     await this.deleteVersion(document.id);
