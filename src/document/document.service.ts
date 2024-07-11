@@ -77,8 +77,26 @@ export class DocumentService {
 
   // Get documents by user id
   async getDocumentsByUser(id_user: number): Promise<Document[]> {
-    return await this.documentRepository.find({
-      where: { user: { id: id_user }, is_active: true },
+    const user = await this.userRepository.findOne({
+      where: { id: id_user },
+      relations: ['projects'],
+    });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    const projectIds = user.projects.map((project) => project.id);
+
+    if (projectIds.length === 0) {
+      throw new Error('Usuario no tiene proyectos asignados');
+    }
+
+    let documents = await this.documentRepository.find({
+      where: {
+        project: { id: In(projectIds) },
+        version: { last_version: true },
+        is_active: true,
+      },
       relations: [
         'requirements',
         'version',
@@ -88,6 +106,8 @@ export class DocumentService {
         'project',
       ],
     });
+
+    return documents;
   }
 
   // Get last version documents by project id
