@@ -427,6 +427,10 @@ export class DocumentService {
       throw new Error('Documento no encontrado');
     }
 
+    if (document.read_only) {
+      throw new Error('Solo se puede eliminar la ultima versión del documento');
+    }
+
     await this.deleteVersion(document.id);
 
     document.is_active = false;
